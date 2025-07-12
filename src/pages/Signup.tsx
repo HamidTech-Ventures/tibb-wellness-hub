@@ -17,32 +17,33 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
+    
     if (password !== confirmPassword) {
       toast({
-        title: "Password mismatch",
-        description: "Passwords do not match. Please try again.",
+        title: "Passwords don't match",
+        description: "Please make sure both passwords are identical.",
         variant: "destructive",
       });
-      setIsLoading(false);
       return;
     }
+
+    setIsLoading(true);
 
     try {
       const success = await signup(name, email, password);
       if (success) {
         toast({
-          title: "Account created!",
-          description: "Your account has been created successfully.",
+          title: "Account created successfully!",
+          description: "Welcome to TibbCare. Your account has been created.",
         });
-        navigate('/');
+        navigate('/chatbot');
       } else {
         toast({
           title: "Signup failed",
@@ -72,14 +73,14 @@ const Signup = () => {
               <Stethoscope className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-foreground mb-2">Join TibbCare</h1>
-            <p className="text-muted-foreground">Create your account to get started</p>
+            <p className="text-muted-foreground">Create your account to access traditional medicine</p>
           </div>
 
           <Card className="border-sage/20">
             <CardHeader>
               <CardTitle>Create Account</CardTitle>
               <CardDescription>
-                Fill in your details to create your TibbCare account
+                Fill in your details to get started
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -134,15 +135,24 @@ const Signup = () => {
 
                 <div>
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm your password"
-                    required
-                    className="border-sage/30 focus:border-sage"
-                  />
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm your password"
+                      required
+                      className="border-sage/30 focus:border-sage pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
 
                 <Button 

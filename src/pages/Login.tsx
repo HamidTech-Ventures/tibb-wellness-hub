@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -30,7 +29,7 @@ const Login = () => {
           title: "Welcome back!",
           description: "You have been logged in successfully.",
         });
-        navigate('/');
+        navigate('/chatbot');
       } else {
         toast({
           title: "Login failed",

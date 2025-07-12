@@ -15,6 +15,7 @@ import Telemedicine from "./pages/Telemedicine";
 import MyAppointments from "./pages/MyAppointments";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ChatbotPage from "./pages/ChatbotPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/my-appointments" element={<MyAppointments />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/chatbot" element={<ChatbotPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
