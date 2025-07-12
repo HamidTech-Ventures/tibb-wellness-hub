@@ -12,20 +12,25 @@ import {
   ShoppingBag,
   Video,
   BookOpen,
-  Calendar
+  Calendar,
+  User,
+  LogOut
 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [language, setLanguage] = useState('en');
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const navigationItems = [
     { 
@@ -58,6 +63,11 @@ const Header = () => {
 
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'ur' : 'en');
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -115,14 +125,56 @@ const Header = () => {
               <span className="text-sm font-medium">{language === 'en' ? 'عربی' : 'English'}</span>
             </Button>
 
-            {/* Book Appointment */}
-            <Button 
-              className="hidden sm:inline-flex bg-sage hover:bg-dark-sage text-white"
-              onClick={() => navigate('/telemedicine')}
-            >
-              <Calendar className="w-4 h-4 mr-2" />
-              Book Consultation
-            </Button>
+            {/* Authentication */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="border-sage/30 text-sage hover:bg-sage hover:text-white">
+                    <User className="w-4 h-4 mr-2" />
+                    {user.name}
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => navigate('/my-appointments')}>
+                    <Calendar className="w-4 h-4 mr-2" />
+                    My Appointments
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="hidden sm:flex items-center space-x-2">
+                <Button 
+                  variant="outline"
+                  className="border-sage/30 text-sage hover:bg-sage hover:text-white"
+                  onClick={() => navigate('/login')}
+                >
+                  Login
+                </Button>
+                <Button 
+                  className="bg-sage hover:bg-dark-sage text-white"
+                  onClick={() => navigate('/signup')}
+                >
+                  Sign Up
+                </Button>
+              </div>
+            )}
+
+            {/* Book Appointment - only for logged in users */}
+            {user && (
+              <Button 
+                className="hidden sm:inline-flex bg-sage hover:bg-dark-sage text-white"
+                onClick={() => navigate('/telemedicine')}
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                Book Consultation
+              </Button>
+            )}
 
             {/* Mobile Menu Button */}
             <Button
@@ -175,16 +227,55 @@ const Header = () => {
                   Switch to {language === 'en' ? 'اردو' : 'English'}
                 </Button>
                 
-                <Button 
-                  className="w-full justify-start bg-sage hover:bg-dark-sage text-white"
-                  onClick={() => {
-                    navigate('/telemedicine');
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  <Calendar className="w-4 h-4 mr-3" />
-                  Book Consultation
-                </Button>
+                {user ? (
+                  <>
+                    <Button 
+                      className="w-full justify-start bg-sage hover:bg-dark-sage text-white"
+                      onClick={() => {
+                        navigate('/my-appointments');
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <Calendar className="w-4 h-4 mr-3" />
+                      My Appointments
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="w-full justify-start border-sage/30 text-sage hover:bg-sage hover:text-white"
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <LogOut className="w-4 h-4 mr-3" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button 
+                      variant="outline"
+                      className="w-full justify-start border-sage/30 text-sage hover:bg-sage hover:text-white"
+                      onClick={() => {
+                        navigate('/login');
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <User className="w-4 h-4 mr-3" />
+                      Login
+                    </Button>
+                    <Button 
+                      className="w-full justify-start bg-sage hover:bg-dark-sage text-white"
+                      onClick={() => {
+                        navigate('/signup');
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <User className="w-4 h-4 mr-3" />
+                      Sign Up
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

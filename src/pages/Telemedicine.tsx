@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -26,11 +25,30 @@ import {
 import Header from '@/components/Header';
 import ChatBot from '@/components/ChatBot';
 import Footer from '@/components/Footer';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/hooks/use-toast';
 
 const Telemedicine = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const selectedPractitioner = location.state?.selectedPractitioner;
+
+  // Redirect to login if not authenticated
+  React.useEffect(() => {
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please login to book a consultation.",
+        variant: "destructive",
+      });
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
+  if (!user) {
+    return null;
+  }
 
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date>();

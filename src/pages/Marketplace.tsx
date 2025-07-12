@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -26,6 +25,8 @@ import {
 import Header from '@/components/Header';
 import ChatBot from '@/components/ChatBot';
 import Footer from '@/components/Footer';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/hooks/use-toast';
 
 interface Product {
   id: string;
@@ -50,6 +51,7 @@ interface Product {
 
 const Marketplace = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedAilment, setSelectedAilment] = useState('all');
@@ -206,6 +208,15 @@ const Marketplace = () => {
   });
 
   const addToCart = (productId: string) => {
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please login to add products to cart.",
+        variant: "destructive",
+      });
+      navigate('/login');
+      return;
+    }
     setCart(prev => ({
       ...prev,
       [productId]: (prev[productId] || 0) + 1
